@@ -6,7 +6,7 @@
   created 1 Aug 2010
   by Tom Igoe
 
-  This example code is ʵ�� ���� GIT
+  This example code is 妗桄 掛華 GIT
 
   move  HWSG to GITHUB
   1-3
@@ -15,6 +15,8 @@
 */
 #include <HardwareSerial.h>
 #include <Ticker.h>
+#include  "HWSG2_uart.h"
+
 
 // #include "nbiot_m5310.c"
  
@@ -64,7 +66,7 @@ void setup() {
   Serial.printf("%08X\n", (uint32_t)chipid);                       //print Low 4bytes.
 
   // Open serial communications and wait for port to open:
-  M5310_Serial.begin(9600);  // 电路与默认接反了 t
+  M5310_Serial.begin(9600);  // �菔楝銝�霈斗�� t
   DIWEN_Serial.begin(115200, SERIAL_8N1, 17, 16);  //  rxPin, txPin
   HWSG_Serial.begin(1200, SERIAL_8N1, 18, 19);  //  rxPin, txPin
   while (!M5310_Serial) {
@@ -86,7 +88,7 @@ void setup() {
   if(setup_M5310()) {
     DisMessage(0,"M5310 INIT Succese!",dc_white); 
     DisMessage(1,"New SIGN to ONENET ...........",dc_white);
-    if(MIPLADDOBJ()){ // //登录平台
+    if(MIPLADDOBJ()){ // //�餃�撟喳
     DisMessage(0,"M5310 ADDOBJ Succese!",dc_white);         
       }    
     }
@@ -95,7 +97,7 @@ void setup() {
     DisMessage(1,"-------------",dc_white);    
     }
 
-  ticker_HWSG.attach(1, Call_HWSG);   //�?1秒调用Call_HWSG  upload tem  
+  ticker_HWSG.attach(1, Call_HWSG);   //瘥?1蝘��每all_HWSG  upload tem  
 }
 
 void loop() {
@@ -124,40 +126,40 @@ void DisMessage(char No_place,String msg,uint16_t dcc ){
 
 
 //const String  AT_command_5310[4]={
-//  "AT\r\n", //判断模组�?否上电开机成�?  
-//  "AT+CSQ\r\n",// 信号质量检�?
-//  "AT+CEREG?\r\n",// 域附着状态，标识位返�?
-//  "AT+CGATT?\r\n",//检查模�? PS 附着状�? 
+//  "AT\r\n", //�斗璅∠��?�虫��萄��箸��?  
+//  "AT+CSQ\r\n",// 靽∪韐券�璉�?
+//  "AT+CEREG?\r\n",// ����嗆���雿��?
+//  "AT+CGATT?\r\n",//璉�交芋蝏? PS ���嗆? 
 //};
-//AT+COPS=1,2,"46000"  //设置手动注册移动运营�? MNC
+//AT+COPS=1,2,"46000" �//霈曄蔭�瘜典�蝘餃餈�? MNC
 //OK
-//AT+NEARFCN=0,3555  //锁定频点�? 3555，锁频可以有效减小搜网时间，但是频点设置错�??会�?�致搜网失败，建�?通常情况下不要�?�置锁�??
+//AT+NEARFCN=0,3555 �//��憸銝? 3555嚗�憸隞交���撠�蝵�湛�雿憸霈曄蔭�??隡?潸��憭梯揖嚗遣霈?�虜�銝�閬?曄蔭�??
 //OK
-//AT+CSCON=1  //打开信号提示�?动上�?
+//AT+CSCON=1 �//��靽∪�內�?�其��?
 //OK
-//AT+CEREG=1  //打开注册信息�?动上�?
+//AT+CEREG=1 �//��瘜典�靽⊥�?�其��?
 //OK
 //const String  AT_command_5310[6]={
-//  "AT\n", //判断模组�?否上电开机成�?  
+//  "AT\n", //�斗璅∠��?�虫��萄��箸��?  
 //  "AT+CIMI\n",
-//  "AT+CSQ\n",// 信号质量检�?
-//  "AT+CEREG?\n",// 域附着状态，标识位返�?
-//  "AT+CGATT?\n",//检查模�? PS 附着状�?
+//  "AT+CSQ\n",// 靽∪韐券�璉�?
+//  "AT+CEREG?\n",// ����嗆���雿��?
+//  "AT+CGATT?\n",//璉�交芋蝏? PS ���嗆?
 //  "AT+CGATT?\n",//  
 //};
 
 const String  AT_command_5310[6]={
-  "AT", //判断模组�?否上电开机成�?  
+  "AT", //�斗璅∠��?�虫��萄��箸��?  
   "AT+CIMI",
-  "AT+CSQ",// 信号质量检�?
-  "AT+CEREG?",// 域附着状态，标识位返�?
-  "AT+CGATT?",//检查模�? PS 附着状�?
+  "AT+CSQ",// 靽∪韐券�璉�?
+  "AT+CEREG?",// ����嗆���雿��?
+  "AT+CGATT?",//璉�交芋蝏? PS ���嗆?
 };
 
 
 bool  setup_M5310()
 { NB_5310_RES  res;    
-  DisMessage(0,"INIT M5310 AT",dc_white); //显示发送的符号     
+  DisMessage(0,"INIT M5310 AT",dc_white); //�曄內��蝚血     
   delay(2000);   
   res = wait_rx_bc(AT_command_5310[0],4000,"OK");  //  AT  --  OK 
      if(res.status) {
@@ -170,7 +172,7 @@ bool  setup_M5310()
   delay(2000);  
      
   delay(2000);
-  // 表示接收信号强度取范�? 0~31，通常 CSQ值大�?12�?视为网络能�?�使�?
+  // 銵函內�交靽∪撘箏漲���? 0~31嚗虜 CSQ�澆之鈭?12�?閫蛹蝵��賢?蝙�?
   res = wait_rx_bc(AT_command_5310[2],4000,"OK");  //   "AT+CSQ\n",  +CSQ:20,99 
    if(res.status) {
     char ri;
@@ -188,7 +190,7 @@ bool  setup_M5310()
       } 
     delay(2000);  
    
-  res = wait_rx_bc(AT_command_5310[3],4000,"OK");  //  NB附着状�? +CEREG:0,1 (1-5)
+  res = wait_rx_bc(AT_command_5310[3],4000,"OK");  //  NB���嗆? +CEREG:0,1 (1-5)
    if(res.status) {
     char ri;
     ri=res.temp.substring(10).toInt();
@@ -204,7 +206,7 @@ bool  setup_M5310()
     return (false);
       } 
     delay(2000);
-  res = wait_rx_bc(AT_command_5310[4],4000,"OK");  //  AT+CGATT?\n",//检查模�? PS 附着状�?  :1 ok  0:false    
+  res = wait_rx_bc(AT_command_5310[4],4000,"OK");  //  AT+CGATT?\n",//璉�交芋蝏? PS ���嗆?  :1 ok  0:false    
    if(res.status) {
     if(res.temp.substring(8).toInt()==1)
       {DisMessage(1,"CGATT="+res.temp.substring(8),dc_gre);
@@ -222,88 +224,88 @@ bool  setup_M5310()
 }
 
 
-// 模组 侧�?��?�创建，�?前我司提供封装好的注册码 �?换工�? 和注册码 �?换源供�??
+// 璅∠� 靘扯?曉?�撱綽��?���豢�靘�鋆末�釣�� 頧?�Ｗ極�? �釣�� 頧?�Ｘ�靘??
 
-const String  AT_MIPLADDOBJ[4]={//创建实体  // 设置模组侧�?��?�注册码
+const String  AT_MIPLADDOBJ[4]={//�遣摰�  // 霈曄蔭璅∠�靘扯?曉?釣��
   "AT+MIPLCREATE=49,130031F10003F2002304001100000000000010123138332E3233302E34302E33393A35363833000131F300080000000000,0,49,0 ",  
-  "AT+MIPLADDOBJ=0,3200,1,\"1\",0,1 ",   //对象   例程�?，仅订阅 Object 3200，instance 0 为例
-  "AT+MIPLDISCOVERRSP=0,3200,1,4,\"5750\"",   //订阅 Resource资源 例程�?仅�?�阅 Object3200，instance 0 �? 5750 Resource 为例
-  "AT+MIPLOPEN=0,3000,30" ,     //登录平台    
+  "AT+MIPLADDOBJ=0,3200,1,\"1\",0,1 ",   //撖寡情   靘�銝?嚗�霈ａ� Object 3200嚗nstance 0 銝箔�
+  "AT+MIPLDISCOVERRSP=0,3200,1,4,\"5750\"",   //霈ａ� Resource韏� 靘�銝?隞?ａ� Object3200嚗nstance 0 �? 5750 Resource 銝箔�
+  "AT+MIPLOPEN=0,3000,30" ,     //�餃�撟喳    
 };
 bool  MIPLADDOBJ()
 {  NB_5310_RES  res;   
-   res=wait_rx_bc(AT_MIPLADDOBJ[0],3000,"+MIPLCREATE:0"); //  //创建实体 设置模组侧�?��?�注册码 
+   res=wait_rx_bc(AT_MIPLADDOBJ[0],3000,"+MIPLCREATE:0"); //  //�遣摰� 霈曄蔭璅∠�靘扯?曉?釣�� 
     if(res.status) {
     DisMessage(1,"MIPLCREATE OK:"+res.temp,dc_gre);
     }
         else{                        
-    DisMessage(1,"MIPLCREATE false，ADDOBJ quit!",dc_red);   
+    DisMessage(1,"MIPLCREATE false嚗DDOBJ quit!",dc_red);   
     return (false);
       } 
     delay(2000);
 
-   res=wait_rx_bc(AT_MIPLADDOBJ[1],3000,"OK"); //订阅 Object 对象
+   res=wait_rx_bc(AT_MIPLADDOBJ[1],3000,"OK"); //霈ａ� Object 撖寡情
     if(res.status) {
     DisMessage(1,"MMIPLADDOBJ OK:"+res.temp,dc_gre);
     }
         else{                        
-    DisMessage(1,"ADDOBJ false，ADDOBJ quit!",dc_red);   
+    DisMessage(1,"ADDOBJ false嚗DDOBJ quit!",dc_red);   
     return (false);
       } 
     delay(2000);    
 
-   res=wait_rx_bc(AT_MIPLADDOBJ[2],3000,"OK"); //订阅 Resource资源   
+   res=wait_rx_bc(AT_MIPLADDOBJ[2],3000,"OK"); //霈ａ� Resource韏�   
     if(res.status) {
     DisMessage(1,"MIPLDISCOVERRSP OK:"+res.temp,dc_gre);
     }  
         else{                        
-    DisMessage(1,"DISCOVERRSP false，ADDOBJ quit!",dc_red);   
+    DisMessage(1,"DISCOVERRSP false嚗DDOBJ quit!",dc_red);   
     return (false);
       } 
     delay(2000);
       
-   res=wait_rx_bc(AT_MIPLADDOBJ[3],3000,"OK"); ////登录平台�?3000 代表�?次注册成功后的存活时�? 秒，30代表登录超时时间 秒；
+   res=wait_rx_bc(AT_MIPLADDOBJ[3],3000,"OK"); ////�餃�撟喳嚗?3000 隞�”�?甈⊥釣������瘣餅�? 蝘�30隞�”�餃�頞�園 蝘�
     if(res.status) {
     DisMessage(1,"MIPLOPEN OK:"+res.temp,dc_gre);    
     }  
         else{                        
-    DisMessage(1,"MIPLOPEN false，ADDOBJ quit!",dc_red);   
+    DisMessage(1,"MIPLOPEN false嚗DDOBJ quit!",dc_red);   
     return (false);
       } 
     delay(2000);  
   }
 
   /*
-模组登录成功后，平台会下�? OBSERVE 消息�? DISCOVER 消息；模组收
-到这两条消息之后，会�?动�?�理，无需用户另�?��?�理�?
+璅∠��餃�����撟喳隡��? OBSERVE 瘨�? DISCOVER 瘨嚗芋蝏
+�啗�銝斗瘨銋�嚗��?�典?�嚗���冽�西??��?
 [#Recv] +MIPLOBSERVE:0,39121,1,3200,0,-1
 [#Recv] +MIPLDISCOVER:0,39122,3200
 [#Recv] +MIPLREAD:0,39123,3,0,-1,0
-�? 实际处理�?，依靠判�?+MIPLEVENT:0,6 消息 来确认模组是否登�?
-OneNET 平台成功 �? 并且�? 需要等待模�? 接受�? �? OBSERVE 消息�? �? DISCOVER
-消息 �? ，方�?执�?�数�? 收发 操作
+�? 摰�憭�銝?嚗���?+MIPLEVENT:0,6 瘨 �亦＆霈斗芋蝏�衣敶?
+OneNET 撟喳�� 嚗? 撟嗡�嚗? �閬�敺芋蝏? �亙��? �? OBSERVE 瘨�? �? DISCOVER
+瘨 �? 嚗�?�扯?�? �嗅� ��
 */
 
-const String  AT_MIPLNOTIFY[4]={                    // OneNET 数据收发流程
-"AT+MIPLNOTIFY=0,0,3200,0,5750,1,4,\"177788\",0,0,12", //，带ackid，ackid每�?�上报�?�自加，上报数据   
-"AT+MIPLREAD=0,60204,3200,0,5505,\"E309C82FE6\",1",     //Read 操作回�?�流�?
-"AT+MIPLWRITE=0,62069,1",                             //Write 操作回�?�流�?
-"AT+MIPLEXECUTE=0,46081,1",                           //Execute 操作回�?�流�?    
+const String  AT_MIPLNOTIFY[4]={                    // OneNET �唳�嗅�瘚�
+"AT+MIPLNOTIFY=0,0,3200,0,5750,1,4,\"177788\",0,0,12", //嚗蒂ackid嚗ckid瘥?∩��亥?��銝�唳   
+"AT+MIPLREAD=0,60204,3200,0,5505,\"E309C82FE6\",1",     //Read ���?�蝔?
+"AT+MIPLWRITE=0,62069,1",                             //Write ���?�蝔?
+"AT+MIPLEXECUTE=0,46081,1",                           //Execute ���?�蝔?    
 };
 
-const String  AT_MIPLCLOSE[3]={                   // OneNET 登录注销流程
-"AT+MIPLCLOSE=0",           //登录注销流程
-"AT+MIPLDELOBJ=0,3200,0",   //模组侧�?�阅资源列表释放
-"AT+MIPLDEL=0",             //模组侧通信实例删除  
+const String  AT_MIPLCLOSE[3]={                   // OneNET �餃�瘜券�瘚�
+"AT+MIPLCLOSE=0",           //�餃�瘜券�瘚�
+"AT+MIPLDELOBJ=0,3200,0",   //璅∠�靘扯?ａ�韏��”�
+"AT+MIPLDEL=0",             //璅∠�靘折縑摰��  
 };
 
 
-// 发送AT 指令，等待接受回复，返回结构�? NB_5310_RES
+// �T �誘嚗�敺��憭�餈�蝏�雿? NB_5310_RES
 //struct NB_5310_RES
 //{
-//  bool status;  回�?�成�?
-//  String data;  返回的字符串
-//  String temp;  临时 
+//  bool status;  �?��?
+//  String data;  餈���蝚虫葡
+//  String temp;  銝湔 
 //};
 #define trytime 3
 NB_5310_RES wait_rx_bc(String str_ATcmd,long tout,String str_wait)
@@ -320,18 +322,18 @@ NB_5310_RES wait_rx_bc(String str_ATcmd,long tout,String str_wait)
   while(M5310_Serial.read() >= 0);
   while(flag_out<trytime)
   {
-    M5310_Serial.println(str_ATcmd);   //发送AT命令
-    DisMessage(0,"SEND Com="+str_ATcmd,dc_white); //显示发送的command 
-    if( M5310_Serial.available())   //串口有回�?
+    M5310_Serial.println(str_ATcmd);   //�T�賭誘
+    DisMessage(0,"SEND Com="+str_ATcmd,dc_white); //�曄內��command 
+    if( M5310_Serial.available())   //銝脣��憭?
     {
       input = M5310_Serial.readStringUntil('\n');      
       res_.temp+=input;      
-      if(input.indexOf(str_wait)!=-1)//正确收到
+      if(input.indexOf(str_wait)!=-1)//甇�＆�嗅
       {
         res= true;
         res_.status = res;
         res_.data = input;   
-        DisMessage(3,str_ATcmd+"---"+res_.temp ,dc_white); //正确收到       
+        DisMessage(3,str_ATcmd+"---"+res_.temp ,dc_white); //甇�＆�嗅       
    
         return(res_);               
       }
@@ -351,7 +353,7 @@ NB_5310_RES wait_rx_bc(String str_ATcmd,long tout,String str_wait)
       res_.status = res;
       res_.data ="AT OUT time" ;
       while(M5310_Serial.read() >= 0);
-      DisMessage(3,"AT OUT time!--" ,dc_red); // 超时
+      DisMessage(3,"AT OUT time!--" ,dc_red); // 頞
       return(res_);    
     }
   }
@@ -374,17 +376,17 @@ void Call_HWSG()
 
 //AA 11   41    FF FF   00 00 00 20     -------------   CC 33 C3 3C
   
-//Mode：显示模式�?
-//.7 字�?��?�度调整设置 1=调整 0=不调整�?
-//.6 背景色显示�?�置 1=显示 0=不显示�?
-//.5-.4 �?0�?
-//.3-.0：字号大小，0x00-0x09，�?�应字体大小于下�?
+//Mode嚗蝷箸芋撘?
+//.7 摮?血?賢漲靚霈曄蔭 1=靚 0=銝��氬?
+//.6 ��脫蝷箄?曄蔭 1=�曄內 0=銝蝷箝?
+//.5-.4 �?0�?
+//.3-.0嚗��瑕之撠�0x00-0x09嚗?孵�摮�憭批�鈭�嚗?
 //0x00=6*12 0x01=8*16 0x02=10*20 0x03=12*24 0x04=14*28
 //0x05=16*32 0x06=20*40 0x07=24*48 0x08=28*56 0x09=32*64
-//Color：字符显示�?�色�?
-//Bcolor：字符背�?显示颜色�?
-//（x，y）：字�?�串显示的左上�?�坐标�?//string.getBytes(buf, len)
-//Strings：�?�显示的字�?�串，非ASCII 字�?�按�?GBK 编码格式汉字显示�?
+//Color嚗�蝚行蝷粹?�?
+//Bcolor嚗�蝚西��?�曄內憸�?
+//嚗嚗嚗�摮?虫葡�曄內�椰銝?��?//string.getBytes(buf, len)
+//Strings嚗?蝷箇�摮?虫葡嚗�ASCII 摮?行��?GBK 蝻��澆�瘙��曄內�?
 void DisStrings(uint8_t smode,uint16_t cc,uint16_t dc,uint16_t x,uint16_t y, String dstr) //    
 { uint8_t dstart[] = {0xAA, 0x11, 0x41, 
   0xff,0xff, 0x00, 0x00, 
@@ -416,11 +418,11 @@ void   SetFace(uint8_t face)
  }
 
 
-//DIM_Set：背光亮度值，0x00-0xFF�?
-//0x00 背光关闭�?0xFF 背光最�?，其�?0x01-0x1F 设置值背�?
-//�?能会�?烁�?
-//上电默�?�值是0xFF�?
-//举例：AA 30 80 CC 33 C3 3C �?度调节到50%�?
+//DIM_Set嚗��漁摨血潘�0x00-0xFF�?
+//0x00 ���喲嚗?0xFF ���鈭?嚗銝?0x01-0x1F 霈曄蔭�潸��?
+//�?�賭��?�?
+//銝暺?文潭0xFF�?
+//銝曆�嚗A 30 80 CC 33 C3 3C 鈭?摨西��50%�?
 void   SetLightness(uint8_t Light)
 { 
   uint8_t Lightness[] = {0xAA, 0x30, 0xff, 0xCC, 0x33, 0xC3, 0x3C };
