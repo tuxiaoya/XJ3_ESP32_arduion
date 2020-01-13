@@ -14,25 +14,19 @@ typedef struct  HWSG_Uart_frame
 typedef struct HWSG_setup_str
 {
   uint8_t HwSG_setup_frame[16]; //  0xc0
-
+  
   uint8_t HwSGsetup0_radiant; //  发射率坡度  9.9   -9.9    20%--20%
   uint8_t HwSGsetup1_420mARate;  //  4-20MA 微调  9.9%   -9.9%
   uint8_t HwSGsetup2_DisSperiod; //  0.1-9.9
-
-
-
-
-
-
-} HWSG_setup; //HWSG  参数   结构体
+} HWSG_setup_frame; //HWSG  参数   结构体
 
 
 
 class IR_Thermometer_DUBLECOLOR_HWSG2C
 {
 public:
-  boolean SetHWSGTemp(uint8_t Addr_HWSG = HWSG_CMD_Uploadtem0);
-  uint16_t GetHWSGTemp(uint8_t Addr_HWSG = HWSG_CMD_Uploadtem0);
+  boolean SetHWSGTemp(HWSG_setup_str set_HWSG = HWSG_setup_default);
+  HWSG_Uart0  GetHWSGTemp(uint8_t No_HWSG = HWSG_CMD_Uploadtem0);
 
 private:
   float GetTemp(uint8_t Register);
