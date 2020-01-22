@@ -58,6 +58,13 @@ public:
   HWSG_T  GetHWSGTemp(uint8_t No_HWSG = 0);  //default  no  is  0
 
 private:
+  float GetTemp(uint8_t Register);
+
+  uint8_t DiviceAddress;
+  void setMLXAddress(uint8_t addr);
+  uint16_t Get_Register(uint8_t Reg);
+  void write16(uint8_t addr, uint16_t data);
+
   boolean Transform_HWSGUART_to_Temp(HWSG_Uart_frame huf,  HWSG_T ht);
 };
 /******************************************************************************
