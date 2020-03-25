@@ -1,6 +1,8 @@
 /*
   1-9
   hwsg rs232   function  .h   
+
+  3-24  完善类
 */
 
 #ifndef HWSG_2C_H
@@ -44,7 +46,7 @@ typedef struct HWSG_setup_str  // HWSG2C 设定数据结构体  16字节
 {
   uint8_t HwSG_setup_frame[16]; //  0xc0  原始数据
 
-  //  数据抽象体
+  //  数据抽象体 
   uint8_t HwSGsetup0_radiant; //  发射率坡度  9.9   -9.9    20%--20%
   uint8_t HwSGsetup1_420mARate;  //  4-20MA 微调  9.9%   -9.9%
   uint8_t HwSGsetup2_DisSperiod; //  0.1-9.9
