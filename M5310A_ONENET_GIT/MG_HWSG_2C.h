@@ -89,17 +89,23 @@ public:                                                          //  ¹«ÓĞ·½·¨  ¹
   HWSG_T GetHWSGTemp(uint8_t HWSGAddress = 0);                                                             //default  no  is  0  // ¶ÁÈ¡ÎÂ¶È+ »·¾³ÎÂ¶È
 
 private: //  ³ÉÔ±±äÁ¿  Ğ¡Ğ´¼ÓÏÂ»®Ïß  Ë½ÓĞ·½·¨  + Ë½ÓĞ
-  time_t  StartUse_Date;
-  string  HWSGuser_;
+  time_t  StartUse_Date;       //  ÆôÓÃÈÕÆÚ
+  string  HWSGuser_;           //  Ê¹ÓÃµ¥Î»
   uint64_t  HWSG_ESP32Mac;     //getEfuseMac() »ñÈ¡eps32Ğ¾Æ¬macµØÖ·£¨6byte£©£¬¸ÃµØÖ·Ò²¿ÉÒÔÓÃ×÷Ğ¾Æ¬ID£»
-  uint8_t HWSG2C_TYPE;
-  uint8_t ThisHWSGAddress;
+  uint8_t HWSG2C_TYPE;    //  ¸ßÎÂ  ÖĞ  µÍÎÂ
+  uint8_t ThisHWSGAddress;     //  0-15
+  // boolean HwSGsetup6_LockBit;  //  true or  faule
 
   boolean Transform_HWSGUART_To_Temp(HWSG_Uart_frame huf, HWSG_T ht);
   void TXD_GETTEM_Handshake(uint8_t HWSGAddress = 0); // 0-15+0xC0  Á¬Ğø·¢Á½´Î  ÃüÁîËÍÎÂ¶ÈÊı¾İ  CN
   void TXD_RESET_HWSG(uint8_t HWSGAddress = 0); // 0-15+0xF0  Á¬Ğø·¢Á½´Î  ÃüÁîreset HWSG FN
-  void TXD_GETpar_Handshake(uint8_t HWSGAddress = 0); // 0-15+0xC0  Á¬Ğø·¢Á½´Î  ÃüÁîHWSGËÍ³ö¹¤×÷²ÎÊı  DN
-  void TXD_SETpar_Handshake(uint8_t HWSGAddress = 0); // 0-15+0xC0  Á¬Ğø·¢Á½´Î  ÃüÁîHWSGÊÕ¹¤×÷²ÎÊı  DN
+  void TXD_GETpar_Handshake(uint8_t HWSGAddress = 0); // Á¬Ğø·¢Á½´Î  ÃüÁîHWSGËÍ³ö¹¤×÷²ÎÊı  DN
+  void TXD_SETpar_Handshake(uint8_t HWSGAddress = 0); // Á¬Ğø·¢Á½´Î  ÃüÁîHWSGÊÕ¹¤×÷²ÎÊı  EN
+
+  void RXD_TEM_Frame(uint8_t HWSGAddress = 0);        // ·¢³ö C0+ ºó µÈ´ı½ÓÊÜ C0+8Ö¡byteÎÂ¶ÈÊı¾İ
+  void RXD_Parameters_HWSG(uint8_t HWSGAddress = 0);  // ·¢³ö D0+ ºó µÈ´ı½ÓÊÜ D0+16Ö¡byte Parameters
+  void RXD_ParOK_16Parameters(uint8_t HWSGAddress = 0); // ·¢³ö E0+ ºó ½ÓÊÜµ½ E0+  ÕıÈ·ºóËÍ 16Ö¡byte Parameters
+ 
 
   HWSGOnline_Uart_frame RXD__TemDataFrame(uint8_t HWSGAddress = 0); //
   HWSG_Parameters_str RXD_Parameters(uint8_t HWSGAddress = 0);      //
