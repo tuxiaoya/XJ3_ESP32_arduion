@@ -42,15 +42,52 @@ void IR_Sensor_HWSG2C_Online::TXD_SETpar_Handshake(uint8_t HWSGAddress = 0) // Ã
 }
 
 //  ½ÓÊÜ´¦Àí³ÌÐò
-boolean IR_Sensor_HWSG2C_Online::RXD_TEM_Frame(uint8_t HWSGAddress = 0) // ·¢³ö C0+ ºó µÈ´ý½ÓÊÜ C0+8Ö¡byteÎÂ¶ÈÊý¾Ý
+bool IR_Sensor_HWSG2C_Online::RXD_TEM_Frame(uint8_t HWSGAddress = 0) // ·¢³ö C0+ ºó µÈ´ý½ÓÊÜ C0+8Ö¡byteÎÂ¶ÈÊý¾Ý
 {
-  if (HWSG_Serial(2).available() > 0)
+  HwSG_LookFor = true;
+
+  HWSG_RxD_TRIES = 0;
+  while (HwSG_LookFor)
   {
-    // get incoming byte:
-    inByte = HWSG_Serial.read();
-   
-  }
+    while (HWSG_Serial.available() > 0)
+    {
+
+      HWSG_RxD_TRIES++;
+      // get incoming byte:
+      inByte = HWSG_Serial.read();
+    }
+
+   // if too many time for get data force exit   #define HWSG_TryCount 50
+   if (HWSG_RxD_TRIES >  HWSG_TryCount)
+   {
+#ifdef DEBUG
+     Serial.println("Gps end for max tries");
+#endif
+     g_dev_gpsLookFor = false;
+   }
+
 }
+}
+
+bool IR_Sensor_HWSG2C_Online::encode(char c)
+{
+  ++encodedCharCount;  // maybe wo need a  terminators  thinkabout to add  in BWS_ASM  
+
+  switch (encodedCharCount)   //  case  every byte  0-7
+  {
+  case 0 : //   
+  if (c== ) 
+  default: // ordinary characters
+    if (curTermOffset < sizeof(term) - 1)
+      term[curTermOffset++] = c;
+    if (!isChecksumTerm)
+      parity ^= c;
+    return false;
+  }
+
+  return false;
+}
+
 boolean IR_Sensor_HWSG2C_Online::RXD_Parameters_HWSG(uint8_t HWSGAddress = 0) // ·¢³ö D0+ ºó µÈ´ý½ÓÊÜ D0+16Ö¡byte Parameters
 {
 

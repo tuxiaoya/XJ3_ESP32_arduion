@@ -33,6 +33,12 @@
 #define HWSG2C_TYPE_MIDTEM 0X2  //  HWSG
 #define HWSG2C_TYPE_LOWTEM 0X3  //  HWSG
 
+#define HWSG_TryCount 50
+
+unsigned int HWSG_RxD_TRIES = 0;
+
+bool HwSG_LookFor = true;
+
 typedef struct HWSGOnline_Uart_frame
 {
   uint8_t HwSG_RX_head;   //  0xc0 接受的帧头
@@ -94,7 +100,10 @@ private: //  成员变量  小写加下划线  私有方法  + 私有
   uint64_t  HWSG_ESP32Mac;     //getEfuseMac() 获取eps32芯片mac地址（6byte），该地址也可以用作芯片ID；
   uint8_t HWSG2C_TYPE;    //  高温  中  低温
   uint8_t ThisHWSGAddress;     //  0-15
+
+  // uint8_t HWSGAddress; //  0-15
   // boolean HwSGsetup6_LockBit;  //  true or  faule
+  uint8_t encodedCharCount;
 
   boolean Transform_HWSGUART_To_Temp(HWSG_Uart_frame huf, HWSG_T ht);
   void TXD_GETTEM_Handshake(uint8_t HWSGAddress = 0); // 0-15+0xC0  连续发两次  命令送温度数据  CN
