@@ -14,8 +14,19 @@
 #include "Arduino.h"
 #else
 #include "WProgram.h"
-
 #endif
+
+
+#define _HWSG_VERSION "1.20.4" // software version of this library
+#define _HWSG_GETTEM_CMD0  0xC0
+#define _HWSG_GETPAR_CMD0  0xD0
+#define _HWSG_SETPAR_CMD0  0xE0
+#define _HWSG_RESET_CMD0   0xF0
+
+
+
+
+
 
 // Define GPIO of  UART ： RXTX is ESP32 的 RXTX
 #define M5310_RX3 3 //  origion lib is  rx1  tx3 ,because my faule to rhe wrong gpio  default is HardwareSerial 0
@@ -29,41 +40,51 @@
 
 #define HWSG_CMD_Uploadtem0 0XC0 //  HWSG upload  tem  2 times
 
-#define HWSG2C_TYPE_HIGHTEM  0X1 //  HWSG
-#define HWSG2C_TYPE_MIDTEM 0X2  //  HWSG
-#define HWSG2C_TYPE_LOWTEM 0X3  //  HWSG
+
+//  枚举定义仪器类型  
+#define HWSG_TYPE_HIGHTEM  0X1 //  HWSG
+#define HWSG_TYPE_MIDTEM 0X2  //  HWSG
+#define HWSG_TYPE_LOWTEM 0X3  //  HWSG
+#define HWSG_TYPE_PortableTEM 0X4  //  HWSG
+enum HWSG2C_TYPE { HWSG_TYPE_HIGHTEM, HWSG_TYPE_MIDTEM, HWSG_TYPE_LOWTEM,HWSG_TYPE_PortableTEM} ;
+
+
 
 #define HWSG_TryCount 50
 
 unsigned int HWSG_RxD_TRIES = 0;
-
 bool HwSG_LookFor = true;
 
-typedef struct HWSGOnline_Uart_frame
+
+
+
+
+struct HWSG_Temp     
+{
+  uint16_t ObjTemp; //  目标温度
+  uint16_t AmbTemp  //  环境温度
+};                  //HWSG online串口数据 数值结构体
+
+struct HWSGOnline_Uart_frame
 {
   uint8_t HwSG_RX_head;   //  0xc0 接受的帧头
   uint8_t HwSG_RX_data[8]; //  8帧BYTE数据
   uint8_t RX_state     // 接受状态 0= 超时无响应  1=正常  2=异常数据
 };                        //HWSGonline串口数据接收队列结构体
 
-typedef struct HWSG_T
-{
-  uint16_t ObjTemp; //  目标温度
-  uint16_t AmbTemp  //  环境温度
-};                  //HWSG online串口数据 数值结构体
 
-typedef struct HWSG_Parameters_str // HWSG2C 设定数据结构体  16字节
+
+struct HWSG_Parameters_Str // HWSG2C 设定数据结构体  16字节
 {
   uint8_t HwSG_Parameters_frame[16]; //  0xc0  原始数据
-  //  数据抽象体
-
+    //  数据抽象体
   uint8_t HwSGsetup0_radiant;         //  发射率坡度  9.9   -9.9    20%--20%
   uint8_t HwSGsetup1_420mARate;       //  4-20MA 微调  9.9%   -9.9%
   uint8_t HwSGsetup2_DisSperiod;      //  0.1-9.9
   uint8_t HwSGsetup3_420mAStartPoint; //  X100
   uint8_t HwSGsetup4_420mAENDtPoint;  //   X100
   uint8_t HwSGsetup5_AntiBaseLine;    //  20-40
-  boolean HwSGsetup6_LockBit;         //  true or  faule
+  bool    HwSGsetup6_LockBit;         //  true or  faule
   uint8_t HwSGsetup7_UartID;          //  0-F
   uint16_t HwSGsetup8_TEMUPLimit;     //   X100
   uint16_t HwSGsetup9_TEMDOWNLimit;   //   X100
@@ -88,22 +109,22 @@ struct tm
 class IR_Sensor_HWSG2C_Online // HWSG2C  仪器类
 {
 public:                                                          //  公有方法  公有变量
-  IR_Sensor_HWSG2C_Online(uint8_t HWSGAddress);                   // strcuct function
+  IR_Sensor_HWSG2C_Online(uint8_t HWSGAddress , HWSG2C_TYPE Type );                   // 构造函数 1 仪器ID ，温度类型    strcuct function
   boolean begin();
   boolean Set_HWSG2C_parameters(uint8_t HWSGAddress ,HWSG_setup_str Parameters_HWSG = HWSG_setup_default); // 设置参数
   HWSG_setup_str Get_HWSG2C_parameters(uint8_t HWSGAddress);                                               // 设置参数
   HWSG_T GetHWSGTemp(uint8_t HWSGAddress = 0);                                                             //default  no  is  0  // 读取温度+ 环境温度
 
 private: //  成员变量  小写加下划线  私有方法  + 私有
-  time_t  StartUse_Date;       //  启用日期
-  string  HWSGuser_;           //  使用单位
-  uint64_t  HWSG_ESP32Mac;     //getEfuseMac() 获取eps32芯片mac地址（6byte），该地址也可以用作芯片ID；
-  uint8_t HWSG2C_TYPE;    //  高温  中  低温
-  uint8_t ThisHWSGAddress;     //  0-15
+  time_t  _StartUse_Date;       //  启用日期
+  string  _HWSGuser_;           //  使用单位
+  uint64_t  _HWSG_ESP32Mac;     //getEfuseMac() 获取eps32芯片mac地址（6byte），该地址也可以用作芯片ID；
+  HWSG2C_TYPE _Machine_Type;    //  高温  中  低温
+  uint8_t _Me_HwsgAddress;     //  0-15
 
   // uint8_t HWSGAddress; //  0-15
   // boolean HwSGsetup6_LockBit;  //  true or  faule
-  uint8_t encodedCharCount;
+  uint8_t _encodedCharCount;
 
   boolean Transform_HWSGUART_To_Temp(HWSG_Uart_frame huf, HWSG_T ht);
   void TXD_GETTEM_Handshake(uint8_t HWSGAddress = 0); // 0-15+0xC0  连续发两次  命令送温度数据  CN
