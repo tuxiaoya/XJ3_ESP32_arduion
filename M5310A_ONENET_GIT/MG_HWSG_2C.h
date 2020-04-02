@@ -3,6 +3,7 @@
   hwsg rs232   function  .h   
 
   3-24  ÍêÉÆÀà
+  4-2 ÃâÃÜÂëÉèÖÃ
 */
 
 #ifndef HWSG_2C_H
