@@ -19,15 +19,17 @@
 
 
 #define _HWSG_VERSION "1.20.4" // software version of this library
+
+// 握手标志  连续两次去  回一个
 #define _HWSG_GETTEM_CMD0  0xC0
 #define _HWSG_GETPAR_CMD0  0xD0
 #define _HWSG_SETPAR_CMD0  0xE0
 #define _HWSG_RESET_CMD0   0xF0
 
-
-
-
-
+// HWSG 取温度 uart 返回状态  
+#define HWSG_UART_OK 0x00
+#define HWSG_UART_TIMEOUT 0xFF
+#define HWSG_UART_BADPACKET 0xFE
 
 // Define GPIO of  UART ： RXTX is ESP32 的 RXTX
 #define M5310_RX3 3 //  origion lib is  rx1  tx3 ,because my faule to rhe wrong gpio  default is HardwareSerial 0
@@ -43,9 +45,9 @@
 
 
 //  枚举定义仪器类型  
-#define HWSG_TYPE_HIGHTEM  0X1 //  HWSG
-#define HWSG_TYPE_MIDTEM 0X2  //  HWSG
-#define HWSG_TYPE_LOWTEM 0X3  //  HWSG
+#define HWSG_TYPE_HIGHTEM   0X1 //  HWSG
+#define HWSG_TYPE_MIDTEM    0X2  //  HWSG
+#define HWSG_TYPE_LOWTEM    0X3  //  HWSG
 #define HWSG_TYPE_PortableTEM 0X4  //  HWSG
 enum HWSG2C_TYPE { HWSG_TYPE_HIGHTEM, HWSG_TYPE_MIDTEM, HWSG_TYPE_LOWTEM,HWSG_TYPE_PortableTEM} ;
 
@@ -136,9 +138,8 @@ private: //  成员变量  小写加下划线  私有方法  + 私有
   void RXD_TEM_Frame(uint8_t HWSGAddress = 0);        // 发出 C0+ 后 等待接受 C0+8帧byte温度数据
   void RXD_Parameters_HWSG(uint8_t HWSGAddress = 0);  // 发出 D0+ 后 等待接受 D0+16帧byte Parameters
   void RXD_ParOK_16Parameters(uint8_t HWSGAddress = 0); // 发出 E0+ 后 接受到 E0+  正确后送 16帧byte Parameters
- 
 
-  HWSGOnline_Uart_frame RXD__TemDataFrame(uint8_t HWSGAddress = 0); //
+  uint8_t RXD__TemDataFrame(uint8_t HWSGAddress, uint16_t timeout); //
   HWSG_Parameters_str RXD_Parameters(uint8_t HWSGAddress = 0);      //
 }
 
