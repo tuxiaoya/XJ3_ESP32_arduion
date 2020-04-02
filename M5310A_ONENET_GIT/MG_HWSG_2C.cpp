@@ -42,17 +42,17 @@ void IR_Sensor_HWSG2C_Online::TXD_SETpar_Handshake(uint8_t HWSGAddress = 0) // Ã
       HWSG_Serial.write(HWSGAddress+0xE0); 
 }
 
-//  ½ÓÊÜ´¦Àí³ÌÐò
+//  URAT ½ÓÊÜ´¦Àí³ÌÐò    ÕýÈ·9Ö¡
 /**************************************************************************/
 /*!
-    @brief   Helper function to receive data over UART from the sensor and process it into a packet
+    @brief   Helper function to receive data over UART from the HWSG2c and process it into a packet
     @param   packet A structure containing the bytes received
     @param   timeout how many milliseconds we're willing to wait
     @returns <code>FINGERPRINT_OK</code> on success
     @returns <code>FINGERPRINT_TIMEOUT</code> or <code>FINGERPRINT_BADPACKET</code> on failure
 */
 /**************************************************************************/
-uint8_t IR_Sensor_HWSG2C_Online::RXD_TEM_Frame(uint8_t HWSGAddress, uint16_t timeout) // ·¢³ö C0+ ºó µÈ´ý½ÓÊÜ C0+8Ö¡byteÎÂ¶ÈÊý¾Ý
+uint8_t IR_Sensor_HWSG2C_Online::RXD_TEM_Frame(HWSG_Temp *HWSG_T ,uint8_t HWSGAddress, uint16_t timeout) // ·¢³ö C0+ ºó µÈ´ý½ÓÊÜ C0+8Ö¡byteÎÂ¶ÈÊý¾Ý
 {
   HwSG_LookFor = true;
   uint8_t inByte;

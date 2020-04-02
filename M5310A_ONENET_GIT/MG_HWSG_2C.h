@@ -139,7 +139,7 @@ private: //  成员变量  小写加下划线  私有方法  + 私有
   void RXD_Parameters_HWSG(uint8_t HWSGAddress = 0);  // 发出 D0+ 后 等待接受 D0+16帧byte Parameters
   void RXD_ParOK_16Parameters(uint8_t HWSGAddress = 0); // 发出 E0+ 后 接受到 E0+  正确后送 16帧byte Parameters
 
-  uint8_t RXD__TemDataFrame(uint8_t HWSGAddress, uint16_t timeout); //
+  uint8_t RXD_TEM_Frame(HWSG_Temp *HWSG_T ,uint8_t HWSGAddress, uint16_t timeout); //
   HWSG_Parameters_str RXD_Parameters(uint8_t HWSGAddress = 0);      //
 }
 
