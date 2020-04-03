@@ -1,7 +1,7 @@
 /*
   1-21
   hwsg rs232   function  
-
+  4-3 Ê¹ÓÃmillis()º¯Êý
 */
 
 #include "MG_HWSG_2C.H"
@@ -52,32 +52,33 @@ void IR_Sensor_HWSG2C_Online::TXD_SETpar_Handshake(uint8_t HWSGAddress = 0) // Ã
     @returns <code>FINGERPRINT_TIMEOUT</code> or <code>FINGERPRINT_BADPACKET</code> on failure
 */
 /**************************************************************************/
-uint8_t IR_Sensor_HWSG2C_Online::RXD_TEM_Frame(HWSG_Temp *HWSG_T ,uint8_t HWSGAddress, uint16_t timeout) // ·¢³ö C0+ ºó µÈ´ý½ÓÊÜ C0+8Ö¡byteÎÂ¶ÈÊý¾Ý
+const long Wait_HWSG_period = 1000;         //  ms                                                                         // period at which to blink in ms
+uint8_t IR_Sensor_HWSG2C_Online::RXD_TEM_Frame(HWSG_Temp *HWSG_T, uint8_t HWSGAddress, unsigned long timeout) // ·¢³ö C0+ ºó µÈ´ý½ÓÊÜ C0+8Ö¡byteÎÂ¶ÈÊý¾Ý
 {
-  HwSG_LookFor = true;
+  
   uint8_t inByte;
   uint16_t idx = 0, timer = 0;
-  HWSG_RxD_TRIES = 0;
+  unsigned long currentMillis = millis();
+  unsigned long TxDedC0C0_Millis;
+  // unsigned long period = 1000;
 
-  while (HwSG_LookFor)
-  {
+  TxDedC0C0_Millis = currentMillis;
+
+  while (currentMillis - TxDedC0C0_Millis <=  timeout) //  ÅÐ¶ÏUART ÊÇ·ñ½ÓÊÜ³¬Ê± 
+  { currentMillis = millis();   //    delay(1);     timer++;
     while (!HWSG_Serial.available() )
-    {
-      delay(1);
-      timer++;
-     if (timer >= timeout)
+    {      
+      if (timer >= timeout)
       {
         #ifdef FINGERPRINT_DEBUG
         Serial.println("Timed out");
         #endif
-        return FINGERPRINT_TIMEOUT;
+        
       }
     }
     inByte = HWSG_Serial.read();// get incoming byte:
     }
-
-
-
+    return HWSG_UART_TIMEOUT;
 }
 }
 
