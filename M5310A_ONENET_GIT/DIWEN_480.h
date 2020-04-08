@@ -13,14 +13,10 @@
 
 
 
-
-
-
-
-class DIWEN480   //  diwen uart 800X480 lcd class
+class DIWEN480     //  diwen uart 800X480 lcd class
 { public:
     DIWEN480();
-    bool begin();
+    void Begin();
     void DisMessage(char No_place, String msg, uint16_t dcc) ;
     void DisStrings(uint8_t smode, uint16_t cc, uint16_t dc, uint16_t x, uint16_t y, String dstr);
     void SetFace(uint8_t face);
@@ -30,6 +26,8 @@ class DIWEN480   //  diwen uart 800X480 lcd class
 
 
   private:
+
+  
 
   
 }
