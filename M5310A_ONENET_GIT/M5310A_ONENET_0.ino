@@ -305,66 +305,6 @@ const String AT_MIPLCLOSE[3] = {
     "AT+MIPLDEL=0",           //模组侧通信实例删除
 };
 
-// 发送AT 指令，等待接受回复，返回结构体 NB_5310_RES
-//struct NB_5310_RES
-//{
-//  bool status;  回复成功
-//  String data;  返回的字符串
-//  String temp;  临时
-//};
-#define trytime 3
-NB_5310_RES wait_rx_bc(String str_ATcmd, long tout, String str_wait)
-{
-  unsigned long pv_ok = millis();
-  unsigned long current_ok = millis();
-  String input;
-  unsigned char flag_out = 1;
-  NB_5310_RES res_;
-  bool res = false;
-  res_.temp = "";
-  res_.data = "";
-
-  while (M5310_Serial.read() >= 0)
-    ;
-  while (flag_out < trytime)
-  {
-    M5310_Serial.println(str_ATcmd);                  //发送AT命令
-    DisMessage(0, "SEND Com=" + str_ATcmd, dc_white); //显示发送的command
-    if (M5310_Serial.available())                     //串口有回复
-    {
-      input = M5310_Serial.readStringUntil('\n');
-      res_.temp += input;
-      if (input.indexOf(str_wait) != -1) //正确收到
-      {
-        res = true;
-        res_.status = res;
-        res_.data = input;
-        DisMessage(3, str_ATcmd + "---" + res_.temp, dc_white); //正确收到
-
-        return (res_);
-      }
-      else if (input.indexOf(F("ERROR")) != -1)
-      {
-        res = false;
-        flag_out++;
-        res_.temp = "";
-        res_.data = "";
-      }
-    }
-    current_ok = millis();
-    if (current_ok - pv_ok >= tout)
-    {
-      // flag_out=5;
-      res = false;
-      res_.status = res;
-      res_.data = "AT OUT time";
-      while (M5310_Serial.read() >= 0)
-        ;
-      DisMessage(3, "AT OUT time!--", dc_red); // 超时
-      return (res_);
-    }
-  }
-}
 
 void Call_HWSG()
 {

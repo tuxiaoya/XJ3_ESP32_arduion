@@ -1,4 +1,7 @@
-
+/*
+  DIWEN_480.h - DIWEN 480 UART_LCD library for Arduino
+4-9
+*/
 extern "C"
 {
 #include <stdlib.h>
@@ -50,7 +53,6 @@ void DIWEN480::DisStrings(uint8_t smode, uint16_t cc, uint16_t dc, uint16_t x, u
         ds[i] = ' ';
     }
     dstr.getBytes(ds, dstr.length() + 1);
-
     dstart[2] = smode;
     dstart[3] = cc >> 8;
     dstart[4] = cc & 0x00FF;
