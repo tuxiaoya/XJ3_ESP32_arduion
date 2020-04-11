@@ -18,8 +18,7 @@ DIWEN480::DIWEN480()
 }
 
 void DIWEN480::Begin()
-{
-    // send an intro:
+{   // send an intro:
     // M5310_Serial.println("\n\nString  length():");
     SetFace(0);
     LightOut(5);
