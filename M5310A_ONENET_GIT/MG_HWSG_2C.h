@@ -113,7 +113,7 @@ struct tm
 class IR_Sensor_HWSG2C_Online // HWSG2C  仪器类
 {
 public:                                                          //  公有方法  公有变量
-  IR_Sensor_HWSG2C_Online(uint8_t HWSGAddress , HWSG2C_TYPE Type );                   // 构造函数 1 仪器ID ，温度类型    strcuct function
+  IR_Sensor_HWSG2C_Online(uint8_t HWSGAddress, HWSG2C_TYPE Type, uint8_t Uartport); // 构造函数 1 仪器ID ，温度类型    strcuct function
   boolean begin();
   boolean Set_HWSG2C_parameters(uint8_t HWSGAddress ,HWSG_setup_str Parameters_HWSG = HWSG_setup_default); // 设置参数
   HWSG_setup_str Get_HWSG2C_parameters(uint8_t HWSGAddress);                                               // 设置参数
