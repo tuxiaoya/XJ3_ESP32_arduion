@@ -6,10 +6,10 @@
 
 #include "MG_HWSG_2C.H"
 
-IR_Sensor_HWSG2C_Online::IR_Sensor_HWSG2C_Online(uint8_t HWSGAddress , HWSG2C_TYPE Type)
+IR_Sensor_HWSG2C_Online::IR_Sensor_HWSG2C_Online(uint8_t HWSGAddress, HWSG2C_TYPE Type, uint8_t Uartport)
 {
    _Machine_Type=HWSGAddress;    //  ¸ßÎÂ  ÖÐ  µÍÎÂ
-  _Me_HwsgAddress=Type; 
+   _Me_HwsgAddress=Type; 
 }
 
 boolean IR_Sensor_HWSG2C_Online::begin(uint8_t HWSGAddress)
