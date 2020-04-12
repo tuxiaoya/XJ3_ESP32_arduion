@@ -18,16 +18,15 @@
 #include "M5310A.H"
 
 // Callback methods prototypes
-void t1Callback();
-void t2_HwsgMeasure_Callback(); //  every second read  uart HWSG 2C
-void t3_NBIOT_Callback();       //   rvery sec send NB_IOT 
+void t1_Display_Callback();
+void t2_HwsgUart_Callback(); //  every second read  uart HWSG 2C
+void t3_NBIOT5310_Callback();       //   rvery sec send NB_IOT 
 
 //Tasks
-Task t4();
-Task t1(2000, 10, &t1Callback);
-
-Task TaskHwsgMeasure(1000, TASK_FOREVER, &t2_HwsgMeasure_Callback);
-Task t3(5000, TASK_FOREVER, &t3Callback);
+// Task t4();
+Task NBIOT5310(2000, 10, &t3_NBIOT5310_Callback);
+Task TaskHwsgUart(1000, TASK_FOREVER, &t2_HwsgUart_Callback);
+Task TaskDisplay(5000, TASK_FOREVER, &t1_Display_Callback);
 
 Scheduler runner;
 NB_M5310A M5310A(0);                 // NB_M5310A  HardwareSerial 0
@@ -35,9 +34,8 @@ DIWEN480  DIWEN854480(1);              //  HardwareSerial uart Number 1
 IR_Sensor_HWSG2C_Online HWSG2C_0(0, HWSG_TYPE_HIGHTEM ,2); // HWSG ID 0, HardwareSerial uart Number 2
 
 void sys_init()
-{
-    DIWEN854480.Begin();    
-    M5310A.init(); 
+{   DIWEN854480.Begin();    
+    M5310A.Begin(); 
     HWSG2C_0.begin(); 
 }
 

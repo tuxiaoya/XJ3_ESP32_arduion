@@ -53,8 +53,7 @@ class NB_M5310A
 {
 public:
     NB_M5310A();
-    bool debug;
-
+    bool Begin();
     void (*Event_debug)(char *data);
     void reset();
     void rebootModule();
