@@ -9,6 +9,7 @@
 #include <Ticker.h>
 #include "MG_HWSG_2C.H"
 #include "M5310A.H"
+#include "OneButton.h"
 
 // Callback methods prototypes
 void t1_Display_Callback();
@@ -27,6 +28,10 @@ Scheduler HWSG_IOT_run;
 NB_M5310A M5310A(0);                 // NB_M5310A  HardwareSerial 0
 DIWEN480  DIWEN854480(1);              //  HardwareSerial uart Number 1
 IR_Sensor_HWSG2C_Online HWSG2C_0(0, HWSG_TYPE_HIGHTEM ,2); // HWSG ID 0, HardwareSerial uart Number 2
+
+// °´¼ü´¦Àí  
+OneButton button1(A1, true);
+OneButton button2(A2, true);
 
 void sys_init()
 {   DIWEN854480.Begin();    
