@@ -12,11 +12,15 @@
 
 #include <ctime>
 
-#if ARDUINO >= 100
 #include "Arduino.h"
-#else
-#include "WProgram.h"
+#if defined(__AVR__) || defined(ESP8266)
+#include <SoftwareSerial.h>
+#elif defined(FREEDOM_E300_HIFIVE1)
+#include <SoftwareSerial32.h>
+#define SoftwareSerial SoftwareSerial32
 #endif
+
+
 
 
 #define _HWSG_VERSION "1.20.4" // software version of this library
@@ -112,8 +116,10 @@ struct tm
 
 class IR_Sensor_HWSG2C_Online // HWSG2C  仪器类
 {
-public:                                                          //  公有方法  公有变量
-  IR_Sensor_HWSG2C_Online(uint8_t HWSGAddress, HWSG2C_TYPE Type, uint8_t Uartport); // 构造函数 1 仪器ID ，温度类型    strcuct function
+public:
+  HardwareSerial HWSG_Serial();
+  //  公有方法  公有变量
+  IR_Sensor_HWSG2C_Online(uint8_t HWSGAddress, HWSG2C_TYPE Type, uint8_t HardwareSerialport); // 构造函数 1 仪器ID ，温度类型    strcuct function
   boolean Begin();
   boolean Set_HWSG2C_parameters(uint8_t HWSGAddress ,HWSG_setup_str Parameters_HWSG = HWSG_setup_default); // 设置参数
   HWSG_setup_str Get_HWSG2C_parameters(uint8_t HWSGAddress);                                               // 设置参数
@@ -126,6 +132,7 @@ private: //  成员变量  小写加下划线  私有方法  + 私有
   HWSG2C_TYPE _Machine_Type;    //  高温  中  低温
   uint8_t _Me_HwsgAddress;     //  0-15
 
+
   // uint8_t HWSGAddress; //  0-15
   // boolean HwSGsetup6_LockBit;  //  true or  faule
   uint8_t _encodedCharCount;
@@ -135,21 +142,14 @@ private: //  成员变量  小写加下划线  私有方法  + 私有
   void TXD_RESET_HWSG(uint8_t HWSGAddress = 0); // 0-15+0xF0  连续发两次  命令reset HWSG FN
   void TXD_GETpar_Handshake(uint8_t HWSGAddress = 0); // 连续发两次  命令HWSG送出工作参数  DN
   void TXD_SETpar_Handshake(uint8_t HWSGAddress = 0); // 连续发两次  命令HWSG收工作参数  EN
-
   void RXD_TEM_Frame(uint8_t HWSGAddress = 0);        // 发出 C0+ 后 等待接受 C0+8帧byte温度数据
   void RXD_Parameters_HWSG(uint8_t HWSGAddress = 0);  // 发出 D0+ 后 等待接受 D0+16帧byte Parameters
   void RXD_ParOK_16Parameters(uint8_t HWSGAddress = 0); // 发出 E0+ 后 接受到 E0+  正确后送 16帧byte Parameters
 
   uint8_t RXD_TEM_Frame(HWSG_Temp *HWSG_T ,uint8_t HWSGAddress, uint16_t timeout); //
   HWSG_Parameters_str RXD_Parameters(uint8_t HWSGAddress = 0);      //
+
+  // Stream *mySerial;
+  // HardwareSerial *hwSerial;
 }
 
-/******************************************************************************
-  Copyright (C) <2020>  <minguang co.ltd txy>
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
-
-
- ******************************************************************************/

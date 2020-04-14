@@ -28,6 +28,28 @@ void DIWEN480::Begin()
     DisMessage(1, "--HWSG NBIOT VCODE SYSTEM--", dc_blue); //
 }
 
+
+
+void DIWEN480::DisMessage(char No_place, String msg, uint16_t dcc)
+{
+
+    switch (No_place)
+    {
+    case 0: //
+        DisStrings(0x42, dcc, 0x0000, dpx0, 460, msg);
+        break;
+    case 1: // your hand is close to the sensor
+        DisStrings(0x42, dcc, 0x0000, dpx1, 460, msg);
+        break;
+    case 2: // your hand is close to the sensor
+        DisStrings(0x42, dcc, 0x0000, dpx2, 460, msg);
+        break;
+    case 3: // your hand is close to the sensor
+        DisStrings(0x41, dcc, 0x0000, 0, 0, msg);
+        break;
+    }
+}
+
 //AA 11   41    FF FF   00 00 00 20     -------------   CC 33 C3 3C
 //Mode：显示模式。
 //.7 字符宽度调整设置 1=调整 0=不调整。
