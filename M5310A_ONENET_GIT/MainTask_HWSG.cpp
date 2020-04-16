@@ -30,6 +30,13 @@ NB_M5310A M5310A(0);                 // NB_M5310A  HardwareSerial 0
 DIWEN480  DIWEN854480(1);              //  HardwareSerial uart Number 1
 IR_Sensor_HWSG2C_Online HWSG2C_0(0, HWSG_TYPE_HIGHTEM ,2); // HWSG ID 0, HardwareSerial uart Number 2
 
+// hs_port is HardwareSerial uart Number from 0-2
+switch(hs_port){
+case:0
+
+
+}
+
 
 // °´¼ü define
 EasyButton UP_button(KEY_UP);
