@@ -32,9 +32,10 @@
 #define _HWSG_RESET_CMD0   0xF0
 
 // HWSG 取温度 uart 返回状态  
-#define HWSG_UART_OK 0x00
-#define HWSG_UART_TIMEOUT 0xFF
-#define HWSG_UART_BADPACKET 0xFE
+#define HWSG_UART_OK 0
+#define HWSG_UART_TIMEOUT 1
+#define HWSG_UART_BADID 2
+#define HWSG_UART_BADPACKET 3
 
 // Define GPIO of  UART ： RXTX is ESP32 的 RXTX
 #define M5310_RX3 3 //  origion lib is  rx1  tx3 ,because my faule to rhe wrong gpio  default is HardwareSerial 0
@@ -44,7 +45,8 @@
 #define HWSG_RX16 16 // to  hwsg uart  ,default is HardwareSerial 2
 #define HWSG_TX17 17
 
-#define HWSG2C_baudrate   1200       //  HWSG upload  tem  2 times
+#define HWSG2C_baudrate   1200       //      baudrate   1200 
+#define HWSG2C_uart_timeout   1000       //  uart_timeout   1000 ms
 
 //  枚举定义仪器类型  
 #define HWSG_TYPE_HIGHTEM   0X1 //  HWSG
@@ -62,8 +64,8 @@ struct HWSG_Temp
 
 struct HWSGOnline_Uart_frame
 {
-  uint8_t HwSG_RX_head;   //  0xc0 接受的帧头
-  uint8_t HwSG_RX_data[8]; //  8帧BYTE数据
+  //  uint8_t HwSG_RX_head;   //  0xc0 接受的帧头
+  uint8_t HwSG_RX_data[9]; //  帧头+ 8帧BYTE数据
   uint8_t RX_state         // 0xFF超时无响应  0x00正常 0xFE异常数据   HWSG 取温度 uart 返回状态
 };                        //HWSGonline串口数据接收队列结构体
 
@@ -118,13 +120,13 @@ public:
    HWSG_Temp GetHWSGTemp(uint8_t HWSGAddress);                                                              //default  no  is  0  // 读取温度+ 环境温度
 
  private: //  成员变量  小写加下划线  私有方法  + 私有
-   boolean HWSGUART_Transto_Temp(HWSGOnline_Uart_frame huf, HWSG_Temp ht);
+   HWSG_Temp HWSGUART_Transto_Temp(HWSGOnline_Uart_frame huf);
    void TXD_GETTEM_Handshake(uint8_t HWSGAddress );   // 0-15+0xC0  连续发两次  命令送温度数据  CN
    void TXD_RESET_HWSG(uint8_t HWSGAddress );         // 0-15+0xF0  连续发两次  命令reset HWSG FN
    void TXD_GETpar_Handshake(uint8_t HWSGAddress );   // 连续发两次  命令HWSG送出工作参数  DN
    void TXD_SETpar_Handshake(uint8_t HWSGAddress );   // 连续发两次  命令HWSG收工作参数  EN
    HWSGOnline_Uart_frame RXD_TEM_Frame(uint8_t HWSGAddress); // 发出 C0+ 后 等待接受 C0+8帧byte温度数据
-   void RXD_Parameters_HWSG(uint8_t HWSGAddress );    // 发出 D0+ 后 等待接受 D0+16帧byte Parameters
+   HWSG_Parameters_Str   RXD_Parameters_HWSG(uint8_t HWSGAddress );    // 发出 D0+ 后 等待接受 D0+16帧byte Parameters
    void RXD_ParOK_16Parameters(uint8_t HWSGAddress ); // 发出 E0+ 后 接受到 E0+  正确后送 16帧byte Parameters
 
    uint8_t RXD_TEM_Frame(HWSG_Temp *HWSG_T, uint8_t HWSGAddress, uint16_t timeout); //

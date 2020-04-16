@@ -23,34 +23,39 @@ boolean IR_Sensor_HWSG2C_Online::Begin(uint32_t baudrate)
   if (h2CSerial)  h2CSerial->begin(baudrate);
 }
 
-boolean IR_Sensor_HWSG2C_Online::HWSGUART_Transto_Temp(HWSGOnline_Uart_frame huf, HWSG_Temp ht)
+HWSG_Temp  IR_Sensor_HWSG2C_Online::HWSGUART_Transto_Temp(HWSGOnline_Uart_frame huf)  // 把数据帧转换为 温度+环境温度+数据状态
 {   
   }
 
 HWSG_Temp IR_Sensor_HWSG2C_Online::GetHWSGTemp(uint8_t HWSGAddress)
-  {
-    TXD_GETTEM_Handshake(HWSGAddress);
-
-
+  { HWSGOnline_Uart_frame  Huf;
+    TXD_GETTEM_Handshake(HWSGAddress);    //发两个握手  0-15+0xC0 
+    Huf=RXD_TEM_Frame(HWSGAddress);      // 等待接受uart数据帧  到 huf
+    return HWSGUART_Transto_Temp(Huf);   // 把数据帧转换为 温度+环境温度+数据状态  返回
   }
-  //  发送握手  
+
+  //  命令送温度数据  CN   发送握手  
   void IR_Sensor_HWSG2C_Online::TXD_GETTEM_Handshake(uint8_t HWSGAddress)  //  发两个握手  0-15+0xC0  连续发两次  命令送温度数据  CN
   {
     SERIAL_WRITE(HWSGAddress + _HWSG_GETTEM_CMD0); // send 0xc0+ 2 times
     SERIAL_WRITE(HWSGAddress + _HWSG_GETTEM_CMD0); // send 0xc0+ 2 times
   }
 
+// 软复位 HWSG2  无返回
   void IR_Sensor_HWSG2C_Online::TXD_RESET_HWSG(uint8_t HWSGAddress) // 
   {
-    SERIAL_WRITE(HWSGAddress + _HWSG_RESET_CMD0); // send 0xc0+ 2 times
+    SERIAL_WRITE(HWSGAddress + _HWSG_RESET_CMD0); 
+    SERIAL_WRITE(HWSGAddress + _HWSG_RESET_CMD0); 
   }
 
-  void IR_Sensor_HWSG2C_Online::TXD_GETpar_Handshake(uint8_t HWSGAddress) // 命令HWSG送出工作参数  DN
+// 命令HWSG送出工作参数  DN
+  void IR_Sensor_HWSG2C_Online::TXD_GETpar_Handshake(uint8_t HWSGAddress) 
   {
     SERIAL_WRITE(HWSGAddress + _HWSG_GETPAR_CMD0); // send 0xD0+0 2 times  to  rev  parameters from  HWSG2C
     SERIAL_WRITE(HWSGAddress + _HWSG_GETPAR_CMD0);
   }
 
+// 命令HWSG收工作参数  
 void IR_Sensor_HWSG2C_Online::TXD_SETpar_Handshake(uint8_t HWSGAddress) // 命令HWSG收工作参数  DN
 {
   SERIAL_WRITE(HWSGAddress + _HWSG_SETPAR_CMD0); // send 0xE0+0 2 times  to   send parameters to HWSG2C
@@ -67,58 +72,50 @@ void IR_Sensor_HWSG2C_Online::TXD_SETpar_Handshake(uint8_t HWSGAddress) // 命令H
     @returns <code>FINGERPRINT_TIMEOUT</code> or <code>FINGERPRINT_BADPACKET</code> on failure
 */
 /**************************************************************************/
-const long Wait_HWSG_period = 1000;  //   RXD_TEM_Frame(HWSG_Temp *HWSG_T, uint8_t HWSGAddress, uint16_t timeout);                                                                      // period at which to blink in ms
 HWSGOnline_Uart_frame IR_Sensor_HWSG2C_Online::RXD_TEM_Frame(uint8_t HWSGAddress) // 发出 C0+ 后 等待接受 C0+8帧byte温度数据
 {  
   uint8_t inByte;
-  uint16_t idx = 0, timer = 0;
+  uint8_t idx = 0;
   unsigned long currentMillis = millis();
-  unsigned long TxDedC0C0_Millis;
-  // unsigned long period = 1000;
-
-  TxDedC0C0_Millis = currentMillis;
-
-  while (currentMillis - TxDedC0C0_Millis <=  timeout) //  判断UART 是否接受超时 
-  { currentMillis = millis();   //    delay(1);     timer++;
-    while (!HWSG_Serial.available() )
-    {      
-      if (timer >= timeout)
-      {
-        #ifdef FINGERPRINT_DEBUG
-        Serial.println("Timed out");
-        #endif
-        
-      }
+  unsigned long TxDstart_Millis;
+  HWSGOnline_Uart_frame reading_frame;  
+  TxDstart_Millis = currentMillis;
+  while (currentMillis - TxDstart_Millis <  HWSG2C_uart_timeout) //  判断UART 是否接受超时 
+  { currentMillis = millis();   //     
+    if ( h2CSerial->available())
+    {
+    inByte = h2CSerial->read();// get incoming byte:     
+    reading_frame.HwSG_RX_data[idx]=inByte;
+    if(idx==0)  
+    {
+      if(reading_frame.HwSG_RX_data[0]!= HWSGAddress)  // 帧头不相同 逻辑错误
+        {reading_frame.RX_state=HWSG_UART_BADID ;  
+         return reading_frame;}      
+    }    
+    else if( (reading_frame.HwSG_RX_data[idx]>>4)!=idx)  // 右移4位 位操作后数据变了吗？
+    {
+     reading_frame.RX_state=HWSG_UART_BADPACKET ; // 帧内逻辑错误
+     return reading_frame; 
     }
-    inByte = HWSG_Serial.read();// get incoming byte:
+    else if(idx==8)  {
+    reading_frame.RX_state=HWSG_UART_OK ;   // 帧数据正常 
+    return reading_frame;
+    } 
+    inByte++;
     }
-    return HWSG_UART_TIMEOUT;
-}
-}
-
-bool IR_Sensor_HWSG2C_Online::encode(char c)
-{
-  ++encodedCharCount;  // maybe wo need a  terminators  thinkabout to add  in BWS_ASM  
-
-  switch (encodedCharCount)   //  case  every byte  0-7 
-  {
-  case 0 : //   
-  if (c== ) 
-  default: // ordinary characters
-    if (curTermOffset < sizeof(term) - 1)
-      term[curTermOffset++] = c;
-    if (!isChecksumTerm)
-      parity ^= c;
-    return false;
   }
+// 帧数据超时
+reading_frame.RX_state=HWSG_UART_TIMEOUT ;  
+return reading_frame;
 
-  return false;
 }
 
-boolean IR_Sensor_HWSG2C_Online::RXD_Parameters_HWSG(uint8_t HWSGAddress = 0) // 发出 D0+ 后 等待接受 D0+16帧byte Parameters
+
+HWSG_Parameters_Str IR_Sensor_HWSG2C_Online::RXD_Parameters_HWSG(uint8_t HWSGAddress = 0) // 发出 D0+ 后 等待接受 D0+16帧byte Parameters
 {
 
 }
+
 boolean IR_Sensor_HWSG2C_Online::RXD_ParOK_16Parameters(uint8_t HWSGAddress = 0) // 发出 E0+ 后 接受到 E0+  正确后送 16帧byte Parameters
 {
 
