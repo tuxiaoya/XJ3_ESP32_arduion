@@ -23,9 +23,7 @@ boolean IR_Sensor_HWSG2C_Online::Begin(uint32_t baudrate)
   if (h2CSerial)  h2CSerial->begin(baudrate);
 }
 
-HWSG_Temp  IR_Sensor_HWSG2C_Online::HWSGUART_Transto_Temp(HWSGOnline_Uart_frame huf)  // 把数据帧转换为 温度+环境温度+数据状态
-{   
-  }
+
 
 HWSG_Temp IR_Sensor_HWSG2C_Online::GetHWSGTemp(uint8_t HWSGAddress)
   { HWSGOnline_Uart_frame  Huf;
@@ -34,8 +32,46 @@ HWSG_Temp IR_Sensor_HWSG2C_Online::GetHWSGTemp(uint8_t HWSGAddress)
     return HWSGUART_Transto_Temp(Huf);   // 把数据帧转换为 温度+环境温度+数据状态  返回
   }
 
-  //  命令送温度数据  CN   发送握手  
-  void IR_Sensor_HWSG2C_Online::TXD_GETTEM_Handshake(uint8_t HWSGAddress)  //  发两个握手  0-15+0xC0  连续发两次  命令送温度数据  CN
+  // #define HWSG_TEM_OK 1
+  // #define HWSG_TEM_illegal 0
+  // 把数据帧转换为 温度+环境温度+数据状态
+  HWSG_Temp IR_Sensor_HWSG2C_Online::HWSGUART_Transto_Temp(HWSGOnline_Uart_frame huf)
+  {
+    HWSG_Temp ht;
+    uint16_t  h0,h1,h2,h3;   // ho is  low byte of frame 
+    h0 = huf.HwSG_RX_data[1] >> 4; 
+    h1 = huf.HwSG_RX_data[2] >> 4;h1=h1<<4;
+    h2 = huf.HwSG_RX_data[3] >> 4;
+    h2 = h2 << 8; // h2 must be <8 else tem will over 2048 thatis illegal
+    if (h2 >= 8)
+    { // otherwise the tem data is illegal
+      ht.Temp_State = HWSG_TEM_illegal;
+      return ht;
+    }
+    h3 = huf.HwSG_RX_data[4] >> 4;  // h3 must be 0 
+    if (h3!=0) {     // otherwise the tem data is illegal
+      ht.Temp_State = HWSG_TEM_illegal;
+      return ht;
+    }
+      ht.ObjTemp = h0 + h1 + h2 + h3;  // 获得目标温度
+      // 环境温度
+      h0 = huf.HwSG_RX_data[7] >> 4;
+      h1 = huf.HwSG_RX_data[8] >> 4; h1 = h1 << 4;
+      // h1 must be <7  else 环境温度 will over 111 度  that is impossible
+      if (h1 >= 7)  // otherwise the tem data is illegal
+      { 
+        ht.Temp_State = HWSG_TEM_illegal;
+        return ht;
+      }
+      // noa ,the  tem is ok 
+      ht.AmbTemp=h0+h1;
+      ht.Temp_State = HWSG_TEM_OK;
+      return ht;
+  }
+
+      
+      //  命令送温度数据  CN   发送握手
+void IR_Sensor_HWSG2C_Online::TXD_GETTEM_Handshake(uint8_t HWSGAddress) //  发两个握手  0-15+0xC0  连续发两次  命令送温度数据  CN
   {
     SERIAL_WRITE(HWSGAddress + _HWSG_GETTEM_CMD0); // send 0xc0+ 2 times
     SERIAL_WRITE(HWSGAddress + _HWSG_GETTEM_CMD0); // send 0xc0+ 2 times
@@ -66,9 +102,8 @@ void IR_Sensor_HWSG2C_Online::TXD_SETpar_Handshake(uint8_t HWSGAddress) // 命令H
 /**************************************************************************/
 /*!
     @brief   to receive data over UART from the HWSG2c and process it into a packet
-    @param   packet A structure containing the bytes received
-    @param   timeout how many milliseconds we're willing to wait
-    @returns <code>FINGERPRINT_OK</code> on success
+    @param   tuint8_t HWSGAddress
+    @returns HWSGOnline_Uart_frame
     @returns <code>FINGERPRINT_TIMEOUT</code> or <code>FINGERPRINT_BADPACKET</code> on failure
 */
 /**************************************************************************/
